@@ -1,0 +1,14 @@
+{
+  "name": "client-sample",
+  "version": "1.0.0",
+  "description": "Client sample for ActionCable",
+  "main": "sample.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Taichiro Suzuki",
+  "license": "ISC",
+  "dependencies": {
+    "websocket": "^1.0.23"
+  }
+}
