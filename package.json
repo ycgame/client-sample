@@ -9,6 +9,7 @@
   "author": "Taichiro Suzuki",
   "license": "ISC",
   "dependencies": {
+    "request": "^2.74.0",
     "websocket": "^1.0.23"
   }
 }
