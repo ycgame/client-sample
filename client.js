@@ -24,7 +24,7 @@ Client = function(id){
     
     //ログインするときに送信する情報
     this.options = {
-	url: 'http://localhost:3000/users/1/login',
+	url: 'http://localhost:3000/users/'+this.id+'/login',
 	method: 'POST',
 	headers: {'Content-Type': 'application/json'},
 	json: true,
@@ -72,8 +72,12 @@ Client = function(id){
 		    u = JSON.parse(msg['user']);
 		    x = msg['x'];
 		    y = msg['y'];
+		    pos_x = msg['pos_x'];
+		    pos_y = msg['pos_y'];
 		    
-		    _this.log(u['user']['name']+' is now at (x: '+x+', y: '+y+')');
+		    _this.log(u['user']['name']+
+			      ' move to (x: '+x+', y: '+y+')'+
+			      ' from (x: '+pos_x+', y: '+pos_y+')');
 		}
 	});
 
@@ -82,6 +86,7 @@ Client = function(id){
     });
 }
 
+//ログを logs/[user_id].log に書き込む
 Client.prototype.log = function(msg){
 
     //stdoutにログを出力
@@ -124,12 +129,16 @@ Client.prototype._auth = function(){
     return JSON.stringify(command);
 }
 
-Client.prototype._move = function(x, y){
+//(x , y)        タップした点
+//(pos_x, pos_y) 今いるところ
+Client.prototype._move = function(x, y, pos_x, pos_y){
 
     data = {};
     data['action'] = 'move';
     data['x'] = x;
     data['y'] = y;
+    data['pos_x'] = pos_x;
+    data['pos_y'] = pos_y;
 
     command = {};
     command['command'] = 'message';
@@ -193,20 +202,20 @@ Client.prototype.auth = function(callback){
     }, 500);
 }
 
-Client.prototype.moveLoop = function(x, y){
+Client.prototype.moveLoop = function(x, y, pos_x, pos_y){
     
     var _this = this;
     
     //動作をサーバーに伝える
-    this.connection.sendUTF(this._move(x, y));
+    this.connection.sendUTF(this._move(x, y, pos_x, pos_y));
     
-    //0.01秒後に再び送る
+    //定期的に再び動く
     setTimeout(function(){
 	
 	//適当に少しずつ動く
-	_this.moveLoop(x+(Math.random()-0.5), y+(Math.random()-0.5));
+	_this.moveLoop(x+(Math.random()-0.5), y+(Math.random()-0.5), x, y);
 	
-    }, 10);
+    }, Math.random()*1000);
 }
 
 Client.prototype.run = function(){
@@ -214,7 +223,7 @@ Client.prototype.run = function(){
     var _this = this;
 
     var moveLoop = function(){
-	_this.moveLoop(0, 0);
+	_this.moveLoop(0, 0, 0, 0);
     }
 
     var auth = function(){
