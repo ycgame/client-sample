@@ -16,6 +16,7 @@ Client = function(id){
     
     //ログを書き込むためのfsモジュールの読み込み
     this.fs = require('fs');
+
     //空のログファイル作成
     this.fs.writeFileSync("./logs/"+this.id+".log", "");
 
@@ -28,7 +29,7 @@ Client = function(id){
 	method: 'POST',
 	headers: {'Content-Type': 'application/json'},
 	json: true,
-	form: {/*ここにパスワードを入れる(未実装)*/}
+	form: {password: 'password'}
     };
 
     //接続失敗
@@ -97,6 +98,7 @@ Client.prototype.log = function(msg){
     this.fs.appendFileSync('./logs/'+this.id+".log", msg+"\n");
 }
 
+//Channelを指定する文字列
 Client.prototype._channel = function(){
 
     res = {};
@@ -105,6 +107,7 @@ Client.prototype._channel = function(){
     return JSON.stringify(res);
 }
 
+//購読するための文字列
 Client.prototype._subscribe = function(){
 
     command = {};
@@ -114,6 +117,7 @@ Client.prototype._subscribe = function(){
     return JSON.stringify(command);
 }
 
+//Tokenを送信して認証する文字列
 Client.prototype._auth = function(){
 
     data = {};
@@ -148,6 +152,7 @@ Client.prototype._move = function(x, y, pos_x, pos_y){
     return JSON.stringify(command);
 }
 
+//ログイン手続き
 Client.prototype.login = function(callback){
 
     var _this = this;
@@ -171,6 +176,7 @@ Client.prototype.login = function(callback){
     })
 }
 
+//購読手続き
 Client.prototype.subscribe = function(callback){
     
     var _this = this;
@@ -187,6 +193,7 @@ Client.prototype.subscribe = function(callback){
     }, 500);
 }
 
+//認証手続き
 Client.prototype.auth = function(callback){
     
     var _this = this;
@@ -202,6 +209,7 @@ Client.prototype.auth = function(callback){
     }, 500);
 }
 
+//動作する
 Client.prototype.moveLoop = function(x, y, pos_x, pos_y){
     
     var _this = this;
@@ -218,6 +226,7 @@ Client.prototype.moveLoop = function(x, y, pos_x, pos_y){
     }, Math.random()*1000);
 }
 
+//一連の作業を行う
 Client.prototype.run = function(){
 
     var _this = this;
