@@ -91,11 +91,10 @@ Client = function(id){
 Client.prototype.log = function(msg){
 
     //stdoutにログを出力
-    //console.log("[Client Log] "+msg);
+    console.log("[Client Log] "+msg);
 
-    var _this = this;
-
-    this.fs.appendFileSync('./logs/'+this.id+".log", msg+"\n");
+    //    var _this = this;
+    //    this.fs.appendFileSync('./logs/'+this.id+".log", msg+"\n");
 }
 
 //Channelを指定する文字列
