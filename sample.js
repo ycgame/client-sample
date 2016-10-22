@@ -4,6 +4,10 @@
 
 var Client = require('./client');
 
+var client = new Client(0);
+client.run();
+
+/*
 var run = function(id){
 
     if(id === 5)
@@ -19,3 +23,4 @@ var run = function(id){
 }
 
 run(1);
+*/

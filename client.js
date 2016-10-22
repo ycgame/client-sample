@@ -1,6 +1,6 @@
 
 //クライアントオブジェクト
-Client = function(id){
+Client = function(){
 
     //WebScoketモジュールの読み込み
     var WebSocket = require('websocket').client;
@@ -12,24 +12,24 @@ Client = function(id){
     var _this = this;
 
     //User ID
-    this.id = id;
+    this.name = new Date().getTime().toString(16) + Math.floor(1000*Math.random()).toString(16)
     
     //ログを書き込むためのfsモジュールの読み込み
     this.fs = require('fs');
 
     //空のログファイル作成
-    this.fs.writeFileSync("./logs/"+this.id+".log", "");
+    this.fs.writeFileSync("./logs/"+this.name+".log", "");
 
     //WebSocket用クライアント
     this.client = new WebSocket();
     
-    //ログインするときに送信する情報
+    //ユーザー作成ときに送信する情報
     this.options = {
-	url: 'http://localhost:3000/users/'+this.id+'/login',
+	url: 'http://localhost:3000/users',
 	method: 'POST',
 	headers: {'Content-Type': 'application/json'},
 	json: true,
-	form: {password: 'password'}
+	form: {name: this.name}
     };
 
     //接続失敗
@@ -151,8 +151,8 @@ Client.prototype._move = function(x, y, pos_x, pos_y){
     return JSON.stringify(command);
 }
 
-//ログイン手続き
-Client.prototype.login = function(callback){
+//ユーザー作成
+Client.prototype.create = function(callback){
 
     var _this = this;
 
@@ -161,8 +161,9 @@ Client.prototype.login = function(callback){
 	if(body['status'] == 200){
 
 	    _this.token = body['user']['token'];
+	    _this.id    = body['user']['id'];
 
-	    _this.log('ログイン成功');
+	    _this.log('ユーザー作成成功');
 	    _this.log('Token: '+_this.token);
 
 	    //WebSocketに接続開始
@@ -170,7 +171,7 @@ Client.prototype.login = function(callback){
 	    _this.callback = callback;
 
 	}else{
-	    _this.log('ログイン失敗');
+	    _this.log('ログイン失敗: '+body['status']+" "+body['message']);
 	}
     })
 }
@@ -242,11 +243,11 @@ Client.prototype.run = function(){
 	_this.subscribe(auth);
     }
 
-    var login = function(){
-	_this.login(subscribe);
+    var create = function(){
+	_this.create(subscribe);
     }
 
-    login();
+    create();
 }
 
 module.exports = Client;
